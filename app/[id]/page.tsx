@@ -7,10 +7,7 @@ export default async function ItemPage({
 }: {
     searchParams: { id?: string; title?: string; price?: string; currency?: string; thumbnail?: string };
 }) {
-    // Accediendo a los parámetros de la URL
     const { id, title, price, currency, thumbnail } = searchParams;
-
-    // Obteniendo la descripción del artículo
     const { plain_text } = await getItemDescription(id || "");
 
     return (

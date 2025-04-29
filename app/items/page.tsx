@@ -19,7 +19,6 @@ export default async function ItemsPage({
                 <Link 
                     href={`/${item.name}`} 
                     key={item.id} 
-                    // Aquí no modificamos la href, respetamos la estructura que te pidieron
                 >
                     <div className="flex gap-4 items-center border-b py-4">
                         <img alt={item.title} src={item.thumbnail} className="w-24 h-24 object-cover" />
