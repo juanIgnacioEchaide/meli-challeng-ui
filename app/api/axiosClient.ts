@@ -1,14 +1,16 @@
 import axios from "axios";
-import { getAccessToken } from "../lib/authService";
+import { checkAuthentication } from "../lib/authService";
 
 
 const apiClient = axios.create({
   baseURL: "https://api.mercadolibre.com/",
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 apiClient.interceptors.request.use(async (config) => {
-  console.log('interceptors')
-  const token = await getAccessToken();
+  const {token} = await checkAuthentication();
   config.headers.Authorization = `Bearer ${token}`;
   return config;
 });

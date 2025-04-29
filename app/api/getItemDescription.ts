@@ -1,20 +1,22 @@
-import axiosClient from ".";
-import { ItemDTO, ShortenItemDTO } from "../@types/dto/item.dto";
-import { getMockedShortenItem } from "../utils/get-mocked-items";
+import axios from "axios";
+import { getValidAccessToken } from "../lib/authService";
+import { getMockedDescription } from "../utils/get-mocked-items";
 
-
-export async function getItemDescription(id: string): Promise<ShortenItemDTO> {
+export async function getItemDescription(id: string): Promise<{ plain_text: string }> {
     try {
-        const res = await axiosClient.get(`items/${id}/description`);
-
-        const data = res.data;
-        const items: ItemDTO = data.results;
-
-        return items;
+      const accessToken = await getValidAccessToken();
+  
+      if (!accessToken) throw new Error("No access token");
+  
+      const { data } = await axios.get(`https://api.mercadolibre.com/items/${id}/description`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      return data;
     } catch (error) {
-        console.error('Fallo la solicitud con axios, devolviendo mocked items:', error);
-
-        const mocked = getMockedShortenItem(id);
-        return mocked;
+      console.warn("🔁 Usando mock de descripción:", error);
+      return getMockedDescription('');
     }
-}
+  }

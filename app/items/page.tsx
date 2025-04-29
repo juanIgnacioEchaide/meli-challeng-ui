@@ -7,8 +7,8 @@ export default async function ItemsPage({
 }: {
     searchParams: { search?: string; limit?: string };
 }) {
-    const query = await searchParams?.search || ""; 
-    const DEFAULT_ITEMS_LIMIT = 4
+    const query = searchParams?.search || "";
+    const DEFAULT_ITEMS_LIMIT = 4;
 
     const results = await searchItems(query, DEFAULT_ITEMS_LIMIT);
 
@@ -16,7 +16,11 @@ export default async function ItemsPage({
         <section>
             <h2 className="px-4 py-4">Resultados para {query}</h2>
             {results.map((item: any) => (
-                    <Link href={`/${item.name}`} key={item.id}>
+                <Link 
+                    href={`/${item.name}`} 
+                    key={item.id} 
+                    // Aquí no modificamos la href, respetamos la estructura que te pidieron
+                >
                     <div className="flex gap-4 items-center border-b py-4">
                         <img alt={item.title} src={item.thumbnail} className="w-24 h-24 object-cover" />
                         <div>
@@ -28,11 +32,9 @@ export default async function ItemsPage({
                         <span className="ml-auto text-sm capitalize opacity-50">
                             {item.seller_address.city.name.toLowerCase()}
                         </span>
-                    </div></Link>
-             
+                    </div>
+                </Link>
             ))}
-
         </section>
-
     );
 }

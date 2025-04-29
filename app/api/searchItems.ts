@@ -1,27 +1,24 @@
-import axiosClient from ".";
-import { getAccessToken } from "../lib/authService";
+import axios from "axios";
+import { ItemDTO } from "../@types/dto/item.dto";
+import { getValidAccessToken } from "../lib/authService";
+import { getMockedItems } from "../utils/get-mocked-items";
 
-export const searchItems = async (query: string, limit: number = 10) => {
-  if (!query || query.trim() === "") {
-    console.warn("El query está vacío. No se realiza la solicitud.");
-    return [];
-  }
-
+export async function searchItems(query: string, limit: number): Promise<ItemDTO[]> {
   try {
-    const token = getAccessToken();
+    const accessToken = await getValidAccessToken();
 
-    const { data } = await axiosClient.get(`/sites/MLA/search`, {
-      params: {
-        q: query,
-        limit: limit,
+    if (!accessToken) throw new Error("No access token");
+
+    const { data } = await axios.get("https://api.mercadolibre.com/sites/MLA/search", {
+      params: { q: query, limit },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 
-
-    return data.results;
+    return data.results as ItemDTO[];
   } catch (error) {
-    console.error("Error al realizar la búsqueda", error);
-    return [];
+    console.warn("🔁 Usando mocks por error en búsqueda real:", error);
+    return getMockedItems(query);
   }
-};
+}
